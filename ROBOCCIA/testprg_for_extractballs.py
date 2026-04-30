@@ -36,10 +36,15 @@ def Clahe(img_name): #ヒストグラム平坦化
     masked_red= cv2.bitwise_and(img, img, mask= mask_red) # 元画像から特定の色を抽出
     masked_blue= cv2.bitwise_and(img, img, mask= mask_blue)
     masked_white= cv2.bitwise_and(img, img, mask= mask_white)
-    cv2.imwrite("out_img_red.jpg", masked_red) # 書き出す
-    cv2.imwrite("out_img_blue.jpg", masked_blue)
-    cv2.imwrite("out_img_white.jpg", masked_white)
+    # ノイズ削除のための形態学的処理
+    kernel = np.ones((4,4), np.uint8)  # 4x4のカーネル
+    mask_cleaned_red = cv2.morphologyEx(masked_red, cv2.MORPH_OPEN, kernel)  # 開閉処理（オープニング）
+    mask_cleaned_blue = cv2.morphologyEx(masked_blue, cv2.MORPH_OPEN, kernel)
+    mask_cleaned_white = cv2.morphologyEx(masked_white, cv2.MORPH_OPEN, kernel)
 
+    cv2.imwrite("out_img_red.jpg", mask_cleaned_red) # 書き出す
+    cv2.imwrite("out_img_blue.jpg", mask_cleaned_blue)
+    cv2.imwrite("out_img_white.jpg", mask_cleaned_white)
 
 def Circle(color):
     img = cv2.imread('out_img_'+color+'.jpg')
